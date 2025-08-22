@@ -7,6 +7,7 @@ import '../../providers/theme_provider.dart';
 import '../../constants/app_constants.dart';
 import '../../constants/app_theme.dart';
 import '../../l10n/app_localizations.dart';
+import '../../widgets/version_checker.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -162,6 +163,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'About',
               Icons.info,
               [
+                // Version checker widget for app updates
+                const VersionChecker(),
+                const SizedBox(height: 8),
                 _buildActionTile(
                   'Privacy Policy',
                   'Read our privacy policy',
@@ -193,11 +197,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   () {
                     _showContactSupportDialog();
                   },
-                ),
-                _buildInfoTile(
-                  'Version',
-                  'StudyBuddy v1.0.0',
-                  Icons.info_outline,
                 ),
               ],
             ),

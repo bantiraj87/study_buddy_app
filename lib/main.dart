@@ -14,6 +14,7 @@ import 'providers/user_provider.dart';
 import 'providers/study_provider.dart';
 import 'providers/theme_provider.dart';
 import 'l10n/app_localizations.dart';
+import 'widgets/auto_updater_wrapper.dart';
 // import 'test_firebase_connection.dart';
 
 void main() async {
@@ -79,7 +80,9 @@ class StudyBuddyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const AuthWrapper(),
+            home: const SimpleAutoUpdater(
+              child: AuthWrapper(),
+            ),
           );
         },
       ),

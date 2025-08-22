@@ -64,7 +64,7 @@ class _VersionCheckerState extends State<VersionChecker> {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: const Icon(Icons.system_update_alt, color: AppColors.primary),
+        leading: Icon(Icons.system_update_alt, color: Theme.of(context).primaryColor),
         title: const Text('Check for Updates'),
         subtitle: Text('Current version: v$_currentVersion'),
         trailing: _isChecking

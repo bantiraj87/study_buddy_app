@@ -197,13 +197,11 @@ class _DashboardTabState extends State<DashboardTab> {
 
   Future<void> _checkForUpdates() async {
     try {
-      final updateInfo = await UpdateService.checkForUpdate();
-      if (updateInfo != null && mounted) {
-        UpdateService.showUpdateDialog(context, updateInfo);
-      }
+      // Use the proper initialization method instead of direct check
+      await UpdateService.initializeAutoUpdates(context);
     } catch (e) {
       // Silently handle update check errors
-      debugPrint('Update check failed: $e');
+      debugPrint('Auto-update initialization failed: $e');
     }
   }
 
