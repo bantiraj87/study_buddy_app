@@ -1,0 +1,87 @@
+name: study_buddy_app
+description: "AI-Powered Study Buddy App with Firebase integration."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Cupertino icons
+  cupertino_icons: ^1.0.8
+  
+  # Firebase (latest stable)
+  firebase_core: ^4.0.0
+  firebase_auth: ^6.0.1
+  cloud_firestore: ^6.0.0
+  firebase_messaging: ^16.0.0
+  firebase_analytics: ^12.0.0
+  firebase_app_check: ^0.4.0
+  
+  # State Management
+  provider: ^6.1.2
+  
+  # UI Components
+  flutter_svg: ^2.0.16
+  lottie: ^3.3.1
+  shimmer: ^3.0.0
+  smooth_page_indicator: ^1.2.0
+  flutter_staggered_grid_view: ^0.7.0
+  
+  # Animations
+  animations: ^2.0.11
+  flutter_animate: ^4.5.0
+  
+  # Utilities
+  http: ^1.2.2
+  uuid: ^4.5.1
+  intl: ^0.20.2
+  shared_preferences: ^2.3.3
+  connectivity_plus: ^6.1.1
+  
+  # AI Integration
+  google_generative_ai: ^0.4.6
+  
+  # Google Sign-In
+  google_sign_in: ^7.1.1
+  
+  # Charts
+  fl_chart: ^1.0.0
+  
+  # Speech and Voice
+  speech_to_text: ^7.3.0
+  # flutter_tts: ^4.2.3  # Temporarily commented out due to Windows build issues
+  
+  # Local Storage
+  sqflite: ^2.3.3
+  path: ^1.9.0
+  
+  # Image and File handling
+  image_picker: ^1.1.2
+  file_picker: ^10.3.1
+  
+  # URL and Storage
+  url_launcher: ^6.3.1
+  firebase_storage: ^13.0.0
+  
+  # App Info
+  package_info_plus: ^8.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/animations/

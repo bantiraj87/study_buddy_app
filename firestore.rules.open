@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // COMPLETELY OPEN RULES FOR DEVELOPMENT TESTING
+    // WARNING: DO NOT USE IN PRODUCTION!
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow authentication operations and authenticated user data
+    match /users/{userId} {
+      // Allow users to read and write their own data
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Allow creation for new users
+      allow create: if request.auth != null;
+    }
+    
+    // Allow reading public app data
+    match /app_metadata/{document} {
+      allow read: if true;
+    }
+    
+    // Temporary open access for development
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ULTIMATE OPEN RULES - NO RESTRICTIONS
+    // This will allow all operations without any authentication
+    match /{document=**} {
+      allow read: if true;
+      allow write: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+  }
+}

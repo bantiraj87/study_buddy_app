@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "428716404868",
+    "project_id": "study-buddy-dedde",
+    "storage_bucket": "study-buddy-dedde.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:428716404868:android:746b021d72f6b711ed92d1",
+        "android_client_info": {
+          "package_name": "com.example.study_buddy_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMW128ZxXUS6jVRriL0yXGVfVn900tvh4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
