@@ -2,7 +2,7 @@ name: study_buddy_app
 description: "AI-Powered Study Buddy App with Firebase integration."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ^3.8.1
