@@ -1,5 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum UserRole {
+  admin,
+  moderator,
+  premium,
+  regular,
+}
+
 class UserModel {
   final String id;
   final String email;
@@ -13,6 +20,10 @@ class UserModel {
   final List<String> interests;
   final Map<String, dynamic> preferences;
   final Map<String, dynamic> studyStatistics;
+  final UserRole role;
+  final bool isActive;
+  final DateTime? suspendedUntil;
+  final List<String> permissions;
 
   UserModel({
     required this.id,
@@ -27,6 +38,10 @@ class UserModel {
     this.interests = const [],
     this.preferences = const {},
     this.studyStatistics = const {},
+    this.role = UserRole.regular,
+    this.isActive = true,
+    this.suspendedUntil,
+    this.permissions = const [],
   });
 
   // Convert from Firestore document
@@ -44,7 +59,26 @@ class UserModel {
       interests: List<String>.from(map['interests'] ?? []),
       preferences: Map<String, dynamic>.from(map['preferences'] ?? {}),
       studyStatistics: Map<String, dynamic>.from(map['studyStatistics'] ?? {}),
+      role: _parseUserRole(map['role']),
+      isActive: map['isActive'] ?? true,
+      suspendedUntil: map['suspendedUntil'] != null 
+          ? (map['suspendedUntil'] as Timestamp).toDate() 
+          : null,
+      permissions: List<String>.from(map['permissions'] ?? []),
     );
+  }
+  
+  static UserRole _parseUserRole(String? roleString) {
+    switch (roleString?.toLowerCase()) {
+      case 'admin':
+        return UserRole.admin;
+      case 'moderator':
+        return UserRole.moderator;
+      case 'premium':
+        return UserRole.premium;
+      default:
+        return UserRole.regular;
+    }
   }
 
   // Convert to Firestore document
@@ -61,6 +95,12 @@ class UserModel {
       'interests': interests,
       'preferences': preferences,
       'studyStatistics': studyStatistics,
+      'role': role.name,
+      'isActive': isActive,
+      'suspendedUntil': suspendedUntil != null 
+          ? Timestamp.fromDate(suspendedUntil!) 
+          : null,
+      'permissions': permissions,
     };
   }
 
@@ -77,6 +117,10 @@ class UserModel {
     List<String>? interests,
     Map<String, dynamic>? preferences,
     Map<String, dynamic>? studyStatistics,
+    UserRole? role,
+    bool? isActive,
+    DateTime? suspendedUntil,
+    List<String>? permissions,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -91,6 +135,28 @@ class UserModel {
       interests: interests ?? this.interests,
       preferences: preferences ?? this.preferences,
       studyStatistics: studyStatistics ?? this.studyStatistics,
+      role: role ?? this.role,
+      isActive: isActive ?? this.isActive,
+      suspendedUntil: suspendedUntil ?? this.suspendedUntil,
+      permissions: permissions ?? this.permissions,
     );
+  }
+  
+  // Helper methods for admin functionality
+  bool get isAdmin => role == UserRole.admin;
+  bool get isModerator => role == UserRole.moderator;
+  bool get isPremium => role == UserRole.premium;
+  bool get hasAdminPrivileges => role == UserRole.admin || role == UserRole.moderator;
+  
+  // Compatibility getter for admin screens
+  String? get profileImageUrl => photoUrl;
+  
+  bool hasPermission(String permission) {
+    return permissions.contains(permission) || isAdmin;
+  }
+  
+  bool get isSuspended {
+    if (suspendedUntil == null) return false;
+    return DateTime.now().isBefore(suspendedUntil!);
   }
 }

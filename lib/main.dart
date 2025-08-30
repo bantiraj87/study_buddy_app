@@ -13,8 +13,10 @@ import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
 import 'providers/study_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/admin_auth_provider.dart';
 import 'l10n/app_localizations.dart';
 import 'widgets/auto_updater_wrapper.dart';
+import 'routes/app_routes.dart';
 // import 'test_firebase_connection.dart';
 
 void main() async {
@@ -59,6 +61,7 @@ class StudyBuddyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => StudyProvider()),
+        ChangeNotifierProvider(create: (_) => AdminAuthProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
@@ -80,6 +83,8 @@ class StudyBuddyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: AppLocalizations.supportedLocales,
+            initialRoute: AppRoutes.home,
+            onGenerateRoute: AppRoutes.generateRoute,
             home: const SimpleAutoUpdater(
               child: AuthWrapper(),
             ),

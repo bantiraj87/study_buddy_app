@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
-import '../../providers/user_provider.dart';
 import '../../constants/app_constants.dart';
 import '../../constants/app_theme.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/admin_auth_provider.dart';
 import '../../services/update_service.dart';
+import '../../routes/app_routes.dart';
 import '../features/notes_summarizer_screen.dart';
 import '../features/ai_tutor_screen.dart';
 import '../features/quiz_generator_screen.dart';
 import '../features/flashcards_screen.dart';
 import '../profile/profile_screen.dart';
 import '../settings/settings_screen.dart';
+import '../competitive_quiz_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -96,9 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
                 backgroundColor: AppColors.primaryLight,
-                child: Consumer<UserProvider>(
-                  builder: (context, userProvider, child) {
-                    final user = userProvider.currentUser;
+                child: Consumer<AuthProvider>(
+                  builder: (context, authProvider, child) {
+                    final user = authProvider.userModel;
                     if (user?.photoUrl != null) {
                       return ClipOval(
                         child: Image.network(
@@ -108,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Text(
-                              user.name.isNotEmpty ? user.name[0].toUpperCase() : 'U',
+                              (user?.name?.isNotEmpty ?? false) ? user!.name![0].toUpperCase() : 'U',
                               style: const TextStyle(
                                 color: AppColors.textOnPrimary,
                                 fontWeight: FontWeight.bold,
@@ -119,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }
                     return Text(
-                      user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'U',
+                      (user?.name?.isNotEmpty ?? false) ? user!.name![0].toUpperCase() : 'U',
                       style: const TextStyle(
                         color: AppColors.textOnPrimary,
                         fontWeight: FontWeight.bold,
@@ -137,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: const [
           DashboardTab(),
           StudyTab(),
-          QuizTab(),
+          CompetitiveExamsTab(),
           FlashcardsTab(),
           ProgressTab(),
         ],
@@ -158,9 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
             label: AppStrings.study,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.quiz_outlined),
-            activeIcon: Icon(Icons.quiz),
-            label: AppStrings.quiz,
+            icon: Icon(Icons.school_outlined),
+            activeIcon: Icon(Icons.school),
+            label: 'Exams',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.style_outlined),
@@ -207,9 +209,9 @@ class _DashboardTabState extends State<DashboardTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
-      builder: (context, userProvider, child) {
-        final user = userProvider.currentUser;
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        final user = authProvider.userModel;
         
         return SingleChildScrollView(
           padding: const EdgeInsets.all(AppDimensions.paddingLG),
@@ -217,29 +219,18 @@ class _DashboardTabState extends State<DashboardTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Welcome Header
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${AppStrings.welcomeBack}, ${user?.name ?? 'User'}! 👋',
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Ready to continue learning?',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              Text(
+                '${AppStrings.welcomeBack}, ${user?.name ?? 'User'}! 👋',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Ready to continue learning?',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
               const SizedBox(height: 32),
               
@@ -321,53 +312,78 @@ class _DashboardTabState extends State<DashboardTab> {
                   borderRadius: BorderRadius.circular(AppDimensions.radiusLG),
                   boxShadow: AppShadows.medium,
                 ),
-                child: Column(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildStatItem(context, '${user?.studyStreak ?? 0}', 'Day Streak', Icons.local_fire_department),
-                        _buildStatItem(context, '${user?.totalTopicsCompleted ?? 0}', 'Topics', Icons.book),
-                        _buildStatItem(context, '${((user?.quizAccuracy ?? 0) * 100).toInt()}%', 'Accuracy', Icons.track_changes),
-                      ],
-                    ),
+                    _buildStatItem(context, '${user?.studyStreak ?? 0}', 'Day Streak', Icons.local_fire_department),
+                    _buildStatItem(context, '${user?.totalTopicsCompleted ?? 0}', 'Topics', Icons.book),
+                    _buildStatItem(context, '${((user?.quizAccuracy ?? 0) * 100).toInt()}%', 'Accuracy', Icons.track_changes),
                   ],
                 ),
               ),
               const SizedBox(height: 32),
               
-              // Placeholder for more content
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.all(AppDimensions.paddingXL),
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceVariant,
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusLG),
-                    border: Border.all(color: AppColors.neutral200),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.construction,
-                        size: 64,
-                        color: AppColors.textTertiary,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'More features coming soon!',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: AppColors.textSecondary,
+              // Competitive Exams Section
+              _buildSectionHeader(context, 'Competitive Exams'),
+              const SizedBox(height: 16),
+              
+              Container(
+                padding: const EdgeInsets.all(AppDimensions.paddingLG),
+                decoration: BoxDecoration(
+                  gradient: AppGradients.pastelPurpleGradient,
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusLG),
+                  boxShadow: AppShadows.soft,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.school,
+                          size: 32,
+                          color: AppColors.primary,
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'We\'re building amazing study tools for you.',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textTertiary,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Ace Your Competitive Exams',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'SSC, Banking, Railway & More',
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Find the parent HomeScreen and switch to Exams tab
+                        final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+                        homeState?.setState(() {
+                          homeState._currentIndex = 2; // Switch to Exams tab
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.textOnPrimary,
                       ),
-                    ],
-                  ),
+                      child: const Text('Start Mock Tests'),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -452,26 +468,29 @@ class _DashboardTabState extends State<DashboardTab> {
   }
 }
 
-// Placeholder tabs
+// Study Tab Placeholder
 class StudyTab extends StatelessWidget {
   const StudyTab({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('Study Tab - Coming Soon!'),
+      child: Text(
+        'Study Tab - Coming Soon!',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+      ),
     );
   }
 }
 
-class QuizTab extends StatelessWidget {
-  const QuizTab({super.key});
+// Competitive Exams Tab - wraps CompetitiveQuizScreen
+class CompetitiveExamsTab extends StatelessWidget {
+  const CompetitiveExamsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Quiz Tab - Coming Soon!'),
-    );
+    // Return the competitive quiz screen directly since home screen provides the scaffold
+    return const CompetitiveQuizScreen();
   }
 }
 
@@ -481,7 +500,10 @@ class FlashcardsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('Flashcards Tab - Coming Soon!'),
+      child: Text(
+        'Flashcards Tab - Coming Soon!',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+      ),
     );
   }
 }
@@ -492,7 +514,10 @@ class ProgressTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('Progress Tab - Coming Soon!'),
+      child: Text(
+        'Progress Tab - Coming Soon!',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+      ),
     );
   }
 }

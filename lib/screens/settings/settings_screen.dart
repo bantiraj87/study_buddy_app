@@ -8,6 +8,7 @@ import '../../constants/app_constants.dart';
 import '../../constants/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../widgets/version_checker.dart';
+import '../../services/advanced_update_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -166,6 +167,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 // Version checker widget for app updates
                 const VersionChecker(),
                 const SizedBox(height: 8),
+                _buildActionTile(
+                  'Check for Updates',
+                  'Manually check for app updates',
+                  Icons.system_update,
+                  () => _checkForUpdatesManually(),
+                ),
                 _buildActionTile(
                   'Privacy Policy',
                   'Read our privacy policy',
@@ -475,5 +482,58 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _checkForUpdatesManually() async {
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Checking for updates...'),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      final updateInfo = await AdvancedUpdateService.checkForUpdate();
+      
+      // Close loading dialog
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+      
+      if (updateInfo != null && mounted) {
+        AdvancedUpdateService.showAdvancedUpdateDialog(context, updateInfo);
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Your app is up to date!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Error checking for updates: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
   }
 }

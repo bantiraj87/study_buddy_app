@@ -7,6 +7,7 @@ import '../models/study_plan_model.dart';
 class AIService {
   static const String _apiKey = 'AIzaSyAQIKPWvVamZngYL5Hb2O1vfbUrPDT9enA';
   late final GenerativeModel _model;
+  bool _isQuotaExceeded = false;
 
   AIService() {
     _model = GenerativeModel(
@@ -15,8 +16,19 @@ class AIService {
     );
   }
 
+  bool get isAvailable => !_isQuotaExceeded;
+
+  void _handleQuotaError() {
+    _isQuotaExceeded = true;
+    print('AI Service quota exceeded - switching to fallback mode');
+  }
+
   // Generate quiz questions from content
   Future<String?> generateQuizQuestions(String content, {int numQuestions = 5}) async {
+    if (_isQuotaExceeded) {
+      return getFallbackQuizQuestions(numQuestions);
+    }
+    
     try {
       final prompt = '''
 Create $numQuestions multiple-choice quiz questions based on the following content:
@@ -40,6 +52,10 @@ Format your response as JSON with this structure:
       return response.text;
     } catch (e) {
       print('Error generating quiz questions: $e');
+      if (e.toString().contains('quota') || e.toString().contains('limit')) {
+        _handleQuotaError();
+        return getFallbackQuizQuestions(numQuestions);
+      }
       return null;
     }
   }
@@ -261,5 +277,70 @@ Format in a clear, educational manner.
       print('Error generating practice problems: $e');
       return null;
     }
+  }
+
+  // Fallback methods when quota is exceeded
+  String getFallbackQuizQuestions(int numQuestions) {
+    return json.encode({
+      "questions": List.generate(numQuestions, (index) => {
+        "question": "Sample quiz question ${index + 1} (AI service temporarily unavailable)",
+        "options": [
+          "A) Option A",
+          "B) Option B", 
+          "C) Option C",
+          "D) Option D"
+        ],
+        "correctAnswer": "A",
+        "explanation": "This is a sample explanation. AI-generated questions will be available when the service is restored."
+      })
+    });
+  }
+
+  String getFallbackSummary() {
+    return "AI summarization is temporarily unavailable due to quota limits. Please try again later or use the content as provided.";
+  }
+
+  String getFallbackStudyPlan(String subject, String timeframe, String difficulty) {
+    return '''
+# Study Plan for $subject ($difficulty level - $timeframe)
+
+## Week 1-2: Foundation
+- Review basic concepts and terminology
+- Practice fundamental problems
+- Create summary notes
+
+## Week 3-4: Application
+- Work on practice exercises
+- Apply concepts to real-world scenarios
+- Review and test understanding
+
+## Week 5+: Mastery
+- Advanced problem-solving
+- Create your own examples
+- Teach concepts to others
+
+*Note: This is a basic template. AI-generated personalized study plans will be available when the service is restored.*
+''';
+  }
+
+  Map<String, dynamic> getFallbackDailyChallenge(String subject) {
+    return {
+      "title": "Daily $subject Review",
+      "description": "Review your recent study materials and practice key concepts",
+      "type": "review",
+      "points": 50,
+      "timeEstimate": "15 minutes",
+      "content": "Spend 15 minutes reviewing your notes and practicing problems from your recent $subject studies."
+    };
+  }
+
+  List<String> getFallbackRecommendations() {
+    return [
+      "Review your recent quiz results and focus on topics where you scored lower",
+      "Create flashcards for key terms and concepts",
+      "Practice active recall by testing yourself without looking at notes",
+      "Set up a regular study schedule with short, focused sessions",
+      "Find a study partner or group to discuss challenging topics"
+    ];
   }
 }

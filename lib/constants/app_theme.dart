@@ -301,8 +301,6 @@ class AppTheme {
         onSurface: AppColors.darkTextPrimary,
         outline: AppColors.neutral600,
         outlineVariant: AppColors.neutral700,
-        background: AppColors.darkBackground,
-        onBackground: AppColors.darkTextPrimary,
       ),
       
       // App Bar Theme

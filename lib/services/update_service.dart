@@ -14,7 +14,7 @@ class UpdateService {
   static const String _skipVersionKey = 'skip_version';
   static const String _autoCheckEnabledKey = 'auto_check_enabled';
   
-  // Auto-check interval (24 hours)
+  // Auto-check interval (24 hours for production)
   static const Duration _checkInterval = Duration(hours: 24);
   
   /// Initialize auto-update checking

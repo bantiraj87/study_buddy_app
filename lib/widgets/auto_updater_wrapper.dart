@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:upgrader/upgrader.dart';
-import '../services/update_service.dart';
+import '../services/advanced_update_service.dart';
 
 /// Wrapper widget that automatically checks for app updates
 class AutoUpdaterWrapper extends StatefulWidget {
@@ -26,7 +26,7 @@ class _AutoUpdaterWrapperState extends State<AutoUpdaterWrapper> {
     // Wait for the widget to be mounted before checking for updates
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
-        await UpdateService.initializeAutoUpdates(context);
+        await AdvancedUpdateService.initializeAutoUpdates(context);
       }
     });
   }
@@ -69,7 +69,7 @@ class _SimpleAutoUpdaterState extends State<SimpleAutoUpdater> {
     await Future.delayed(const Duration(seconds: 3));
     
     if (mounted) {
-      await UpdateService.initializeAutoUpdates(context);
+      await AdvancedUpdateService.initializeAutoUpdates(context);
     }
   }
 

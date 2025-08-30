@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Buddy - Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <h2>Study Buddy Admin</h2>
+        </div>
+        
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="#dashboard" onclick="showSection('dashboard')" class="nav-link active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a></li>
+                <li><a href="#users" onclick="showSection('users')" class="nav-link">
+                    <i class="fas fa-users"></i> User Management
+                </a></li>
+                <li><a href="#groups" onclick="showSection('groups')" class="nav-link">
+                    <i class="fas fa-user-friends"></i> Study Groups
+                </a></li>
+                <li><a href="#content" onclick="showSection('content')" class="nav-link">
+                    <i class="fas fa-book"></i> Content Management
+                </a></li>
+                <li><a href="#analytics" onclick="showSection('analytics')" class="nav-link">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </a></li>
+                <li><a href="#notifications" onclick="showSection('notifications')" class="nav-link">
+                    <i class="fas fa-bell"></i> Notifications
+                </a></li>
+                <li><a href="#settings" onclick="showSection('settings')" class="nav-link">
+                    <i class="fas fa-cog"></i> Settings
+                </a></li>
+                <li><a href="#" onclick="logout()" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 id="page-title">Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="admin-profile">
+                    <img src="https://via.placeholder.com/40" alt="Admin" class="profile-img">
+                    <span>Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total Users</h3>
+                        <p class="stat-number" id="total-users">1,234</p>
+                        <span class="stat-change positive">+12% this month</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Active Groups</h3>
+                        <p class="stat-number" id="active-groups">89</p>
+                        <span class="stat-change positive">+8% this month</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Study Sessions</h3>
+                        <p class="stat-number" id="study-sessions">456</p>
+                        <span class="stat-change positive">+15% this month</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Engagement Rate</h3>
+                        <p class="stat-number" id="engagement-rate">87%</p>
+                        <span class="stat-change positive">+3% this month</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>User Growth</h3>
+                    <canvas id="userGrowthChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Study Sessions by Subject</h3>
+                    <canvas id="subjectChart"></canvas>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <i class="fas fa-user-plus"></i>
+                        <span>New user registered: John Doe</span>
+                        <time>2 minutes ago</time>
+                    </div>
+                    <div class="activity-item">
+                        <i class="fas fa-users"></i>
+                        <span>Study group "Math Warriors" created</span>
+                        <time>15 minutes ago</time>
+                    </div>
+                    <div class="activity-item">
+                        <i class="fas fa-book"></i>
+                        <span>New study material uploaded</span>
+                        <time>1 hour ago</time>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Users Section -->
+        <section id="users" class="content-section">
+            <div class="section-header">
+                <h2>User Management</h2>
+                <button class="btn btn-primary" onclick="addUser()">
+                    <i class="fas fa-plus"></i> Add User
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <tr>
+                            <td>001</td>
+                            <td>John Doe</td>
+                            <td>john@example.com</td>
+                            <td>2024-01-15</td>
+                            <td><span class="status active">Active</span></td>
+                            <td>
+                                <button class="btn-icon" onclick="editUser(1)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon" onclick="deleteUser(1)"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Jane Smith</td>
+                            <td>jane@example.com</td>
+                            <td>2024-01-20</td>
+                            <td><span class="status inactive">Inactive</span></td>
+                            <td>
+                                <button class="btn-icon" onclick="editUser(2)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon" onclick="deleteUser(2)"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Groups Section -->
+        <section id="groups" class="content-section">
+            <div class="section-header">
+                <h2>Study Groups</h2>
+                <button class="btn btn-primary" onclick="createGroup()">
+                    <i class="fas fa-plus"></i> Create Group
+                </button>
+            </div>
+
+            <div class="groups-grid">
+                <div class="group-card">
+                    <div class="group-header">
+                        <h3>Math Warriors</h3>
+                        <span class="group-members">15 members</span>
+                    </div>
+                    <p class="group-description">Advanced mathematics study group</p>
+                    <div class="group-stats">
+                        <span><i class="fas fa-calendar"></i> Created: Jan 15, 2024</span>
+                        <span><i class="fas fa-clock"></i> Last active: 2 hours ago</span>
+                    </div>
+                    <div class="group-actions">
+                        <button class="btn btn-sm">View</button>
+                        <button class="btn btn-sm">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+
+                <div class="group-card">
+                    <div class="group-header">
+                        <h3>Science Club</h3>
+                        <span class="group-members">22 members</span>
+                    </div>
+                    <p class="group-description">Physics and Chemistry discussions</p>
+                    <div class="group-stats">
+                        <span><i class="fas fa-calendar"></i> Created: Jan 10, 2024</span>
+                        <span><i class="fas fa-clock"></i> Last active: 1 day ago</span>
+                    </div>
+                    <div class="group-actions">
+                        <button class="btn btn-sm">View</button>
+                        <button class="btn btn-sm">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Section -->
+        <section id="content" class="content-section">
+            <div class="section-header">
+                <h2>Content Management</h2>
+                <button class="btn btn-primary" onclick="uploadContent()">
+                    <i class="fas fa-upload"></i> Upload Content
+                </button>
+            </div>
+
+            <div class="content-grid">
+                <div class="content-item">
+                    <div class="content-type">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="content-info">
+                        <h4>Calculus Notes.pdf</h4>
+                        <p>Mathematics • 2.5 MB • Uploaded 2 days ago</p>
+                        <div class="content-stats">
+                            <span>Downloads: 45</span>
+                            <span>Views: 120</span>
+                        </div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="btn btn-sm">Download</button>
+                        <button class="btn btn-sm">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+
+                <div class="content-item">
+                    <div class="content-type">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="content-info">
+                        <h4>Physics Tutorial Video</h4>
+                        <p>Physics • Video • Uploaded 1 week ago</p>
+                        <div class="content-stats">
+                            <span>Views: 230</span>
+                            <span>Likes: 18</span>
+                        </div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="btn btn-sm">View</button>
+                        <button class="btn btn-sm">Edit</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="content-section">
+            <div class="section-header">
+                <h2>Analytics</h2>
+                <div class="date-filter">
+                    <select id="analytics-period">
+                        <option value="7">Last 7 days</option>
+                        <option value="30">Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="chart-container full-width">
+                    <h3>User Activity Over Time</h3>
+                    <canvas id="activityChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Popular Study Subjects</h3>
+                    <canvas id="subjectsChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Device Usage</h3>
+                    <canvas id="deviceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notifications Section -->
+        <section id="notifications" class="content-section">
+            <div class="section-header">
+                <h2>Send Notifications</h2>
+            </div>
+
+            <div class="notification-form">
+                <div class="form-group">
+                    <label for="notification-type">Notification Type</label>
+                    <select id="notification-type">
+                        <option value="all">All Users</option>
+                        <option value="group">Specific Group</option>
+                        <option value="user">Individual User</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="notification-title">Title</label>
+                    <input type="text" id="notification-title" placeholder="Enter notification title">
+                </div>
+
+                <div class="form-group">
+                    <label for="notification-message">Message</label>
+                    <textarea id="notification-message" rows="4" placeholder="Enter your message"></textarea>
+                </div>
+
+                <button class="btn btn-primary" onclick="sendNotification()">
+                    <i class="fas fa-paper-plane"></i> Send Notification
+                </button>
+            </div>
+
+            <div class="notification-history">
+                <h3>Recent Notifications</h3>
+                <div class="notification-item">
+                    <div class="notification-info">
+                        <h4>Welcome New Users!</h4>
+                        <p>Sent to all users • 2 hours ago</p>
+                    </div>
+                    <span class="notification-status">Delivered</span>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-info">
+                        <h4>Study Group Update</h4>
+                        <p>Sent to Math Warriors group • 1 day ago</p>
+                    </div>
+                    <span class="notification-status">Delivered</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="content-section">
+            <div class="section-header">
+                <h2>Settings</h2>
+            </div>
+
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h3>App Configuration</h3>
+                    <div class="setting-item">
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Allow user registration</span>
+                    </div>
+                    <div class="setting-item">
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Enable notifications</span>
+                    </div>
+                    <div class="setting-item">
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                        <span>Maintenance mode</span>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h3>Security Settings</h3>
+                    <div class="form-group">
+                        <label>Minimum password length</label>
+                        <input type="number" value="8" min="6" max="20">
+                    </div>
+                    <div class="form-group">
+                        <label>Session timeout (minutes)</label>
+                        <input type="number" value="60" min="15" max="480">
+                    </div>
+                    <button class="btn btn-primary">Save Security Settings</button>
+                </div>
+
+                <div class="settings-card">
+                    <h3>Email Configuration</h3>
+                    <div class="form-group">
+                        <label>SMTP Server</label>
+                        <input type="text" value="smtp.gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>SMTP Port</label>
+                        <input type="number" value="587">
+                    </div>
+                    <button class="btn btn-primary">Test Email Configuration</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal for forms -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-body">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="firebase-admin.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

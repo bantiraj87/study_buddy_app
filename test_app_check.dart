@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
-import 'firebase_options.dart';
+import 'lib/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -106,6 +106,7 @@ class AppStrings {
   // App Info
   static const String appName = 'StudyBuddy';
   static const String appTagline = 'Your AI-Powered Study Companion';
+  static const String appVersion = '1.0.3';
 
   // Authentication
   static const String signIn = 'Sign In';

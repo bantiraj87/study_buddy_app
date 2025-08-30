@@ -2,7 +2,7 @@ name: study_buddy_app
 description: "AI-Powered Study Buddy App with Firebase integration."
 publish_to: 'none'
 
-version: 1.0.1+2
+version: 1.0.3+1
 
 environment:
   sdk: ^3.8.1
@@ -73,6 +73,12 @@ dependencies:
   # App Info
   package_info_plus: ^8.0.3
   upgrader: ^11.2.0
+  
+  # File and Permission handling for updates
+  permission_handler: ^11.3.1
+  path_provider: ^2.1.4
+  dio: ^5.7.0
+  open_file: ^3.5.1
 
 dev_dependencies:
   flutter_test:
